@@ -28,14 +28,9 @@ app.post("/getToken", async (req, res) => {
             req.body.participant_name ||
             ("KK_User_" + Date.now());
 
-        const apiKey =
-            process.env.LIVEKIT_API_KEY;
-
-        const apiSecret =
-            process.env.LIVEKIT_API_SECRET;
-
-        const livekitUrl =
-            process.env.LIVEKIT_URL;
+        const apiKey = process.env.LIVEKIT_API_KEY;
+        const apiSecret = process.env.LIVEKIT_API_SECRET;
+        const livekitUrl = process.env.LIVEKIT_URL;
 
         if (!apiKey) {
             return res.status(500).json({
@@ -73,8 +68,7 @@ app.post("/getToken", async (req, res) => {
             canPublishData: true
         });
 
-        const participantToken =
-            await token.toJwt();
+        const participantToken = await token.toJwt();
 
         console.log(
             "Token created for " +
@@ -92,14 +86,10 @@ app.post("/getToken", async (req, res) => {
 
     } catch (error) {
 
-        console.error(
-            "Token error:",
-            error
-        );
+        console.error("Token error:", error);
 
         res.status(500).json({
-            error:
-                "Could not create LiveKit token"
+            error: "Could not create LiveKit token"
         });
     }
 });
@@ -110,9 +100,7 @@ app.listen(PORT, "0.0.0.0", () => {
     console.log("====================================");
     console.log("      K.K LIVE TOKEN SERVER");
     console.log("====================================");
-    console.log(
-        "Server listening on port " + PORT
-    );
+    console.log("Server listening on port " + PORT);
     console.log("Host: 0.0.0.0");
     console.log("Status: RUNNING");
     console.log("====================================");
