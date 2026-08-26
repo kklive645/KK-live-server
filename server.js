@@ -10,15 +10,15 @@ app.use(cors());
 app.use(express.json());
 
 /*
- * HOME
- */
+|--------------------------------------------------------------------------
+| Health Check
+|--------------------------------------------------------------------------
+*/
+
 app.get("/", (req, res) => {
     res.send("K.K Live Server is RUNNING!");
 });
 
-/*
- * HEALTH CHECK
- */
 app.get("/health", (req, res) => {
     res.json({
         status: "ok",
@@ -27,8 +27,11 @@ app.get("/health", (req, res) => {
 });
 
 /*
- * LIVEKIT TOKEN
- */
+|--------------------------------------------------------------------------
+| LiveKit Token
+|--------------------------------------------------------------------------
+*/
+
 app.post("/getToken", async (req, res) => {
 
     try {
@@ -48,9 +51,6 @@ app.post("/getToken", async (req, res) => {
         const livekitUrl =
             process.env.LIVEKIT_URL;
 
-        /*
-         * Check environment variables
-         */
         if (!apiKey) {
             return res.status(500).json({
                 error: "LIVEKIT_API_KEY is missing"
@@ -69,15 +69,13 @@ app.post("/getToken", async (req, res) => {
             });
         }
 
-        /*
-         * Create LiveKit token
-         */
         const token = new AccessToken(
             apiKey,
             apiSecret,
             {
                 identity: participantName,
-                name: participantName
+                name: participantName,
+                ttl: "1h"
             }
         );
 
@@ -89,17 +87,12 @@ app.post("/getToken", async (req, res) => {
             canPublishData: true
         });
 
-        const jwt =
+        const participantToken =
             await token.toJwt();
 
-        /*
-         * Send token to Android app
-         */
         res.json({
             server_url: livekitUrl,
-            participant_token: jwt,
-            room_name: roomName,
-            participant_name: participantName
+            participant_token: participantToken
         });
 
     } catch (error) {
@@ -118,16 +111,17 @@ app.post("/getToken", async (req, res) => {
 });
 
 /*
- * START SERVER
- */
+|--------------------------------------------------------------------------
+| Start Server
+|--------------------------------------------------------------------------
+*/
+
 app.listen(
     PORT,
     "0.0.0.0",
     () => {
-
         console.log(
             `K.K Live Server running on port ${PORT}`
         );
-
     }
 );
