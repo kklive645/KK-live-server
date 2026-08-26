@@ -1,6 +1,5 @@
 const express = require("express");
 const cors = require("cors");
-const { AccessToken } = require("livekit-server-sdk");
 
 const app = express();
 
@@ -9,12 +8,6 @@ const PORT = process.env.PORT || 10000;
 app.use(cors());
 app.use(express.json());
 
-/*
-|--------------------------------------------------------------------------
-| Health Check
-|--------------------------------------------------------------------------
-*/
-
 app.get("/", (req, res) => {
     res.send("K.K Live Server is RUNNING!");
 });
@@ -22,106 +15,67 @@ app.get("/", (req, res) => {
 app.get("/health", (req, res) => {
     res.json({
         status: "ok",
-        server: "K.K Live Server"
+        message: "K.K Live Server is healthy"
     });
 });
 
-/*
-|--------------------------------------------------------------------------
-| LiveKit Token
-|--------------------------------------------------------------------------
-*/
-
 app.post("/getToken", async (req, res) => {
-
     try {
+        const {
+            room_name,
+            participant_name
+        } = req.body;
 
-        const roomName =
-            req.body.room_name || "kk-live-room";
-
-        const participantName =
-            req.body.participant_name || "KK_User";
-
-        const apiKey =
-            process.env.LIVEKIT_API_KEY;
-
-        const apiSecret =
-            process.env.LIVEKIT_API_SECRET;
-
-        const livekitUrl =
-            process.env.LIVEKIT_URL;
-
-        if (!apiKey) {
-            return res.status(500).json({
-                error: "LIVEKIT_API_KEY is missing"
+        if (!room_name || !participant_name) {
+            return res.status(400).json({
+                error: "room_name and participant_name are required"
             });
         }
 
-        if (!apiSecret) {
+        const LIVEKIT_API_KEY = process.env.LIVEKIT_API_KEY;
+        const LIVEKIT_API_SECRET = process.env.LIVEKIT_API_SECRET;
+        const LIVEKIT_URL = process.env.LIVEKIT_URL;
+
+        if (!LIVEKIT_API_KEY || !LIVEKIT_API_SECRET || !LIVEKIT_URL) {
             return res.status(500).json({
-                error: "LIVEKIT_API_SECRET is missing"
+                error: "LiveKit environment variables are missing"
             });
         }
 
-        if (!livekitUrl) {
-            return res.status(500).json({
-                error: "LIVEKIT_URL is missing"
-            });
-        }
+        const { AccessToken } = require("livekit-server-sdk");
 
         const token = new AccessToken(
-            apiKey,
-            apiSecret,
+            LIVEKIT_API_KEY,
+            LIVEKIT_API_SECRET,
             {
-                identity: participantName,
-                name: participantName,
-                ttl: "1h"
+                identity: participant_name,
+                name: participant_name
             }
         );
 
         token.addGrant({
             roomJoin: true,
-            room: roomName,
+            room: room_name,
             canPublish: true,
-            canSubscribe: true,
-            canPublishData: true
+            canSubscribe: true
         });
 
-        const participantToken =
-            await token.toJwt();
+        const jwt = await token.toJwt();
 
         res.json({
-            server_url: livekitUrl,
-            participant_token: participantToken
+            server_url: LIVEKIT_URL,
+            participant_token: jwt
         });
 
     } catch (error) {
-
-        console.error(
-            "Token generation error:",
-            error
-        );
+        console.error("TOKEN ERROR:", error);
 
         res.status(500).json({
-            error:
-                error.message ||
-                "Failed to generate LiveKit token"
+            error: error.message || "Failed to create token"
         });
     }
 });
 
-/*
-|--------------------------------------------------------------------------
-| Start Server
-|--------------------------------------------------------------------------
-*/
-
-app.listen(
-    PORT,
-    "0.0.0.0",
-    () => {
-        console.log(
-            `K.K Live Server running on port ${PORT}`
-        );
-    }
-);
+app.listen(PORT, "0.0.0.0", () => {
+    console.log(`K.K Live Server running on port ${PORT}`);
+});
