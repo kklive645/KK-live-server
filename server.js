@@ -1,28 +1,30 @@
-const express = require("express");
-
-const app = express();
-
-app.use(express.json());
+const http = require("http");
 
 const PORT = process.env.PORT || 10000;
 
-app.get("/", (req, res) => {
-    res.status(200).send("K.K Live Server is RUNNING!");
-});
+const server = http.createServer((req, res) => {
+    if (req.url === "/health") {
+        res.writeHead(200, {
+            "Content-Type": "application/json"
+        });
 
-app.get("/health", (req, res) => {
-    res.status(200).json({
-        status: "ok",
-        server: "K.K Live Server"
+        res.end(JSON.stringify({
+            status: "ok"
+        }));
+
+        return;
+    }
+
+    res.writeHead(200, {
+        "Content-Type": "text/plain"
     });
+
+    res.end("K.K Live Server is RUNNING!");
 });
 
-app.post("/getToken", (req, res) => {
-    res.status(501).json({
-        error: "Token endpoint is not configured yet"
-    });
-});
-
-app.listen(PORT, "0.0.0.0", () => {
-    console.log(`K.K Live Server running on port ${PORT}`);
+server.listen(PORT, "0.0.0.0", () => {
+    console.log("=================================");
+    console.log("K.K Live Server is RUNNING!");
+    console.log("PORT:", PORT);
+    console.log("=================================");
 });
