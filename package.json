@@ -1,6 +1,9 @@
+```json
 {
-  "name": "kk-live-test",
+  "name": "kk-live-server",
   "version": "1.0.0",
+  "private": true,
+  "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
@@ -8,3 +11,4 @@
     "express": "4.21.2"
   }
 }
+```
