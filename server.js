@@ -2,18 +2,11 @@ const http = require("http");
 
 const PORT = process.env.PORT || 10000;
 
+console.log("STARTING K.K LIVE SERVER...");
+console.log("PORT =", PORT);
+
 const server = http.createServer((req, res) => {
-    if (req.url === "/health") {
-        res.writeHead(200, {
-            "Content-Type": "application/json"
-        });
-
-        res.end(JSON.stringify({
-            status: "ok"
-        }));
-
-        return;
-    }
+    console.log("REQUEST:", req.url);
 
     res.writeHead(200, {
         "Content-Type": "text/plain"
@@ -23,8 +16,12 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, "0.0.0.0", () => {
-    console.log("=================================");
-    console.log("K.K Live Server is RUNNING!");
-    console.log("PORT:", PORT);
-    console.log("=================================");
+    console.log("================================");
+    console.log("K.K LIVE SERVER STARTED");
+    console.log("LISTENING ON PORT:", PORT);
+    console.log("================================");
+});
+
+server.on("error", (error) => {
+    console.error("SERVER ERROR:", error);
 });
