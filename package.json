@@ -2,16 +2,12 @@
 {
   "name": "kk-live-server",
   "version": "1.0.0",
-  "description": "K.K Live Server",
   "main": "server.js",
   "scripts": {
     "start": "node server.js"
   },
-  "engines": {
-    "node": "22.x"
-  },
   "dependencies": {
-    "express": "^5.1.0",
+    "express": "^4.21.2",
     "livekit-server-sdk": "^2.15.0"
   }
 }
