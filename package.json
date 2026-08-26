@@ -1,3 +1,4 @@
+```json
 {
   "name": "kk-live-server",
   "version": "1.0.0",
@@ -8,5 +9,10 @@
   },
   "engines": {
     "node": "22.x"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "livekit-server-sdk": "^2.15.0"
   }
 }
+```
