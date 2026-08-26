@@ -85,7 +85,6 @@ app.post("/getToken", async (req, res) => {
         });
 
     } catch (error) {
-
         console.error("Token error:", error);
 
         res.status(500).json({
@@ -95,7 +94,6 @@ app.post("/getToken", async (req, res) => {
 });
 
 app.listen(PORT, "0.0.0.0", () => {
-
     console.log("");
     console.log("====================================");
     console.log("      K.K LIVE TOKEN SERVER");
